@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using SMSGlobal.SMS.Response;
+using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
@@ -23,7 +26,7 @@ namespace SMSGlobal.SMS.Transport
         /// <summary>
         /// Gets the credit balance.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Task</returns>
         public async Task<Response.CreditBalance> getCreditBalance()
         {
             HttpResponseMessage response = await Request("user/credit-balance");
@@ -32,22 +35,38 @@ namespace SMSGlobal.SMS.Transport
         }
 
         /// <summary>
+        /// Sends an sms message.
+        /// </summary>
+        /// <returns>Task</returns>
+        public async Task<Response.SmsSentMessages> sendSms(Object payload)
+        {
+            HttpResponseMessage response = await Request("sms", payload);
+
+            //var json = await response.Content.ReadAsStringAsync();
+
+            //SmsSentMessages messages = JsonConvert.DeserializeObject<SmsSentMessages>(json);
+
+            return await response.Content.ReadAsAsync<Response.SmsSentMessages>();
+        }
+
+        /// <summary>
         /// Requests information from the rest api.
         /// </summary>
         /// <param name="path">The rest api path.</param>
+        /// <param name="payload">The rest api method.</param>
         /// <returns>The http response message object.</returns>
-        private async Task<HttpResponseMessage> Request(string path)
+        private async Task<HttpResponseMessage> Request(string path, Object payload = null)
         {
             using (var client = new HttpClient())
             {
-                string credentials = Credentials(path, "GET");
+                string credentials = Credentials(path, null == payload ? "GET" : "POST");
 
                 client.BaseAddress = new Uri(string.Format("{0}://{1}", uri.Scheme, uri.Host));
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("MAC", credentials);
 
-                HttpResponseMessage response = await client.GetAsync(uri.PathAndQuery);
+                HttpResponseMessage response = null == payload ? await client.GetAsync(uri.PathAndQuery) : await client.PostAsJsonAsync(uri.PathAndQuery, payload);
 
                 response.EnsureSuccessStatusCode();
 

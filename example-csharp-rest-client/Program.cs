@@ -1,5 +1,7 @@
-﻿using System;
+﻿using SMSGlobal.SMS.Response;
+using System;
 using System.Configuration;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace SMSGlobal.SMS
@@ -22,7 +24,7 @@ namespace SMSGlobal.SMS
         /// Asynchronously run task.
         /// </summary>
         /// <param name="args"></param>
-        /// <returns>async</returns>
+        /// <returns>Task</returns>
         static async Task RunAsync(string[] args)
         {
             Transport.Rest rest = new Transport.Rest();
@@ -37,8 +39,16 @@ namespace SMSGlobal.SMS
             {
                 // get the credit balance
                 Console.WriteLine(await rest.getCreditBalance());
+
+                // send an sms message
+                Console.WriteLine(await rest.sendSms(new
+                {
+                    origin = "",
+                    destination = "",
+                    message = "This is a test message"
+                }));
             }
-            catch (System.Net.Http.HttpRequestException exception)
+            catch (HttpRequestException exception)
             {
                 // console log non successful type request responses
                 Console.WriteLine(exception.Message.ToString());

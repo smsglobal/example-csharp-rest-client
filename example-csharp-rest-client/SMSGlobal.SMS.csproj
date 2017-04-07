@@ -71,6 +71,7 @@
   <ItemGroup>
     <Compile Include="Response\CreditBalance.cs" />
     <Compile Include="Response\Response.cs" />
+    <Compile Include="Response\SmsSent.cs" />
     <Compile Include="Transport\Rest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
