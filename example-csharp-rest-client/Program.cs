@@ -50,7 +50,7 @@ namespace SMSGlobal.SMS
             }
             catch (HttpRequestException exception)
             {
-                // console log non successful type request responses
+                // console log unsuccessful type responses
                 Console.WriteLine(exception.Message.ToString());
             }
         }

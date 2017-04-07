@@ -42,10 +42,6 @@ namespace SMSGlobal.SMS.Transport
         {
             HttpResponseMessage response = await Request("sms", payload);
 
-            //var json = await response.Content.ReadAsStringAsync();
-
-            //SmsSentMessages messages = JsonConvert.DeserializeObject<SmsSentMessages>(json);
-
             return await response.Content.ReadAsAsync<Response.SmsSentMessages>();
         }
 
