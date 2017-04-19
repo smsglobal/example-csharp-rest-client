@@ -38,15 +38,20 @@ namespace SMSGlobal.SMS
             try
             {
                 // get the credit balance
-                Console.WriteLine(await rest.getCreditBalance());
+                //Console.WriteLine(await rest.getCreditBalance());
+
+                // get all sms messages
+                //Console.WriteLine(await rest.getSms());
+                // get the latest sms message
+                Console.WriteLine(await rest.getSms("limit=1"));
 
                 // send an sms message
-                Console.WriteLine(await rest.sendSms(new
-                {
-                    origin = "",
-                    destination = "",
-                    message = "This is a test message"
-                }));
+                //Console.WriteLine(await rest.sendSms(new
+                //{
+                //    origin = "",
+                //    destination = "",
+                //    message = "This is a test message"
+                //}));
             }
             catch (HttpRequestException exception)
             {

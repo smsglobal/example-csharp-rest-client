@@ -35,6 +35,18 @@ namespace SMSGlobal.SMS.Transport
         }
 
         /// <summary>
+        /// Gets sms messages.
+        /// </summary>
+        /// <param name="filter">The rest api query string result filter.</param>
+        /// <returns>Task</returns>
+        public async Task<Response.SmsSentMessages> getSms(string filter = "")
+        {
+            HttpResponseMessage response = await Request("sms", null, filter);
+
+            return await response.Content.ReadAsAsync<Response.SmsSentMessages>();
+        }
+
+        /// <summary>
         /// Sends an sms message.
         /// </summary>
         /// <returns>Task</returns>
@@ -50,12 +62,13 @@ namespace SMSGlobal.SMS.Transport
         /// </summary>
         /// <param name="path">The rest api path.</param>
         /// <param name="payload">The rest api method.</param>
+        /// <param name="filter">The rest api query string result filter.</param>
         /// <returns>The http response message object.</returns>
-        private async Task<HttpResponseMessage> Request(string path, Object payload = null)
+        private async Task<HttpResponseMessage> Request(string path, Object payload = null, string filter = "")
         {
             using (var client = new HttpClient())
             {
-                string credentials = Credentials(path, null == payload ? "GET" : "POST");
+                string credentials = Credentials(path, null == payload ? "GET" : "POST", filter);
 
                 client.BaseAddress = new Uri(string.Format("{0}://{1}", uri.Scheme, uri.Host));
                 client.DefaultRequestHeaders.Accept.Clear();
@@ -76,9 +89,9 @@ namespace SMSGlobal.SMS.Transport
         /// <param name="path">The request path.</param>
         /// <param name="method">The request method.</param>
         /// <returns>The credential string.</returns>
-        private string Credentials(string path, string method = "GET")
+        private string Credentials(string path, string method = "GET", string filter = "")
         {
-            uri = new Uri(string.Format("https://{0}/{1}/{2}/", host, version, path));
+            uri = new Uri(string.Format("https://{0}/{1}/{2}/?{3}", host, version, path, filter));
 
             string timestamp = ((int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds).ToString();
             string nonce = Guid.NewGuid().ToString("N");
